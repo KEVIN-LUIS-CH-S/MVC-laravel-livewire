@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); // ID único para cada empleado
+            $table->string('name'); // Nombre del empleado
+            $table->string('email')->unique(); // Correo electrónico único
+            $table->string('position'); // Puesto del empleado
+            $table->decimal('salary', 10, 2); // Salario del empleado
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete(); // Usuario que creó el registro
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete(); // Usuario que actualizó el registro
+            $table->timestamps(); // created_at y updated_at
         });
     }
 
