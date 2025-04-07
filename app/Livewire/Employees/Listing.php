@@ -49,13 +49,13 @@ class Listing extends Component
         ]);
 
         $this->reset(['employeeId', 'name', 'email', 'position', 'salary']);
-        $this->dispatchBrowserEvent('employee-updated');
+        $this->dispatch('employee-updated');
     }
 
     public function delete($id)
     {
         Employee::findOrFail($id)->delete();
-        $this->dispatchBrowserEvent('employee-deleted');
+        $this->dispatch('employee-deleted');
     }
 
     public function render()
