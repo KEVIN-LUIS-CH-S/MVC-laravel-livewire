@@ -1,5 +1,12 @@
 <x-employees.layout :title="__('Employees')">
-    <h1 class="text-2xl font-bold">{{ __('Employees List') }}</h1>
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">{{ __('Employees List') }}</h1>
+        <flux:modal.trigger name="create-employee">
+            <flux:button variant="primary" x-data="" x-on:click.prevent="$dispatch('open-modal', 'create-employee')">
+                {{ __('Add Employee') }}
+            </flux:button>
+        </flux:modal.trigger>
+    </div>
 
      <!-- Campo de búsqueda -->
     <div class="mb-4">
@@ -28,7 +35,11 @@
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">{{ $employee->email }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">{{ $employee->position }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">
-                            <button wire:click="edit({{ $employee->id }})" class="text-blue-500">{{ __('Edit') }}</button>
+                            <flux:modal.trigger :name="'edit-employee-'.$employeeId">
+                                <button wire:click="edit({{ $employee->id }})" class="text-blue-500">
+                                    {{ __('Edit') }}
+                                </button>
+                            </flux:modal.trigger>
                             <button wire:click="delete({{ $employee->id }})" class="text-red-500">{{ __('Delete') }}</button>
                         </td>
                     </tr>
@@ -48,8 +59,11 @@
         {{ $employees->links() }}
     </div>
 
+    <!-- Componente para crear empleados -->
+    <livewire:employees.create-employee />
+
      <!-- Modal de edición -->
-    <flux:modal wire:model.defer="employeeId">
+    <flux:modal :name="'edit-employee-'.$employeeId" wire:model.defer="employeeId">
         <form wire:submit.prevent="update" class="space-y-6">
             <!-- Nombre -->
             <div>
@@ -102,13 +116,12 @@
 
             <!-- Botones -->
             <div class="flex items-center gap-4">
-                <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>
-                <x-action-message class="me-3" on="employee-updated">
-                    {{ __('Saved.') }}
-                </x-action-message>
+                <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>  
             </div>
         </form>
     </flux:modal>
+
+    
 
     <!-- Alerta de confirmación -->
     <script>

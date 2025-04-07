@@ -40,16 +40,20 @@ class Listing extends Component
             'salary' => 'required|numeric|min:0',
         ]);
 
-        $employee = Employee::findOrFail($this->employeeId);
-        $employee->update([
-            'name' => $this->name,
-            'email' => $this->email,
-            'position' => $this->position,
-            'salary' => $this->salary,
-        ]);
+        // Verificar que el empleado existe antes de actualizar
+        if ($this->employeeId) {
+            $employee = Employee::findOrFail($this->employeeId);
+            $employee->update([
+                'name' => $this->name,
+                'email' => $this->email,
+                'position' => $this->position,
+                'salary' => $this->salary,
+            ]);
 
-        $this->reset(['employeeId', 'name', 'email', 'position', 'salary']);
-        $this->dispatch('employee-updated');
+            // Reiniciar los campos del formulario y cerrar el modal
+            $this->reset('employeeId', 'name', 'email', 'position', 'salary');
+            $this->dispatch('employee-updated');
+        }
     }
 
     public function delete($id)
