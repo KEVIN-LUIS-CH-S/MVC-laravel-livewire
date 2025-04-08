@@ -4,6 +4,7 @@ namespace App\Livewire\Employees;
 
 use Livewire\Component;
 use App\Models\Employee;
+use Flux;
 
 class CreateEmployee extends Component
 {
@@ -30,10 +31,10 @@ class CreateEmployee extends Component
         // Reiniciar los campos del formulario
         $this->reset('name', 'email', 'position', 'salary');
 
+        // Cerrar el modal usando Flux
+        Flux::modal('create-employee')->close();
+
         // Emitir un evento para notificar al componente padre
         $this->dispatch('employeeCreated');
-
-        // Cerrar el modal
-        $this->dispatch('close-modal', 'create-employee');
     }
 }

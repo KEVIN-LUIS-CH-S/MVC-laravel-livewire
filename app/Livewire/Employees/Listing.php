@@ -15,10 +15,16 @@ class Listing extends Component
     public $name, $email, $position, $salary; // Campos para editar
 
     protected $queryString = ['search']; // Persistencia de la búsqueda en la URL
+    protected $listeners = ['employeeCreated' => 'refreshEmployees','deleteEmployee','employeeCreated' => 'showEmployeeCreatedAlert'];
 
     public function updatingSearch()
     {
         $this->resetPage(); // Reinicia la paginación al buscar
+    }
+
+    public function showEmployeeCreatedAlert()
+    {
+        $this->dispatch('employee-created');
     }
 
     public function edit($id)
@@ -56,10 +62,9 @@ class Listing extends Component
         }
     }
 
-    public function delete($id)
+    public function deleteEmployee($id)
     {
         Employee::findOrFail($id)->delete();
-        $this->dispatch('employee-deleted');
     }
 
     public function render()
@@ -74,5 +79,11 @@ class Listing extends Component
                 ->orderBy('name')
                 ->paginate(10),
         ]);
+    }
+
+    public function refreshEmployees()
+    {
+        // Este método se ejecutará cuando se emita el evento 'employeeCreated'
+        $this->render();
     }
 }

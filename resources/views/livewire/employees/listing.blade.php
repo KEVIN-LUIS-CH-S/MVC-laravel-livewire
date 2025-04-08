@@ -40,7 +40,9 @@
                                     {{ __('Edit') }}
                                 </button>
                             </flux:modal.trigger>
-                            <button wire:click="delete({{ $employee->id }})" class="text-red-500">{{ __('Delete') }}</button>
+                            <button x-data @click="confirmDelete({{ $employee->id }})" class="text-red-500">
+                                {{ __('Delete') }}
+                            </button>
                         </td>
                     </tr>
                 @empty
@@ -62,81 +64,42 @@
     <!-- Componente para crear empleados -->
     <livewire:employees.create-employee />
 
-     <!-- Modal de edición -->
-    <flux:modal :name="'edit-employee-'.$employeeId" wire:model.defer="employeeId">
-        <form wire:submit.prevent="update" class="space-y-6">
-            <!-- Nombre -->
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
-                <flux:input
-                    id="name"
-                    wire:model="name"
-                    type="text"
-                    required
-                    class="mt-1 block w-full"
-                />
-            </div>
-
-            <!-- Email -->
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Email') }}</label>
-                <flux:input
-                    id="email"
-                    wire:model="email"
-                    type="email"
-                    required
-                    class="mt-1 block w-full"
-                />
-            </div>
-
-            <!-- Posición -->
-            <div>
-                <label for="position" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Position') }}</label>
-                <flux:input
-                    id="position"
-                    wire:model="position"
-                    type="text"
-                    required
-                    class="mt-1 block w-full"
-                />
-            </div>
-
-            <!-- Salario -->
-            <div>
-                <label for="salary" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Salary') }}</label>
-                <flux:input
-                    id="salary"
-                    wire:model="salary"
-                    type="number"
-                    step="0.01"
-                    required
-                    class="mt-1 block w-full"
-                />
-            </div>
-
-            <!-- Botones -->
-            <div class="flex items-center gap-4">
-                <flux:button variant="primary" type="submit" class="w-full">{{ __('Save') }}</flux:button>  
-            </div>
-        </form>
-    </flux:modal>
-
-    
-
     <!-- Alerta de confirmación -->
     <script>
-        window.addEventListener('employee-deleted', () => {
+        function confirmDelete(employeeId) {
             Swal.fire({
-                title: '{{ __('Deleted!') }}',
-                text: '{{ __('The employee has been deleted.') }}',
-                icon: 'success',
+                title: '{{ __('Are you sure?') }}',
+                text: '{{ __('This action cannot be undone.') }}',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: '{{ __('Yes, delete it!') }}',
+                cancelButtonText: '{{ __('Cancel') }}'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    @this.call('deleteEmployee', employeeId);
+                    Swal.fire(
+                        '{{ __('Deleted!') }}',
+                        '{{ __('The employee has been deleted.') }}',
+                        'success'
+                    );
+                }
             });
-        });
+        }
 
         window.addEventListener('employee-updated', () => {
             Swal.fire({
                 title: '{{ __('Updated!') }}',
                 text: '{{ __('The employee has been updated.') }}',
+                icon: 'success',
+            });
+        });
+
+        window.addEventListener('employee-created', () => {
+            Swal.fire({
+                title: '{{ __('Success!') }}',
+                text: '{{ __('The employee has been created successfully.') }}',
                 icon: 'success',
             });
         });
