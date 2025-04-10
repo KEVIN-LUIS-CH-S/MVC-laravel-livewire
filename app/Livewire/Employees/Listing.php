@@ -41,17 +41,27 @@ class Listing extends Component
     public function handleEmployeeUpdated()
     {
         $this->reset('employeeId'); // Limpiar el ID después de actualizar
-        $this->dispatch('employee-updated'); // Disparar el evento para la notificación
+        $this->notify('success', __('Updated!'), __('The employee has been updated successfully.'));
     }
 
     public function handleEmployeeCreated()
     {
-        $this->showEmployeeCreatedAlert();
+        $this->notify('success', __('Success!'), __('The employee has been created successfully.'));
     }
 
     public function deleteEmployee($id)
     {
-        Employee::findOrFail($id)->delete();
+        try {
+            Employee::findOrFail($id)->delete();
+            $this->notify('success', __('Deleted!'), __('The employee has been deleted successfully.'));
+        } catch (\Exception $e) {
+            $this->notify('error', __('Error!'), __('Failed to delete the employee. Please try again.'));
+        }
+    }
+
+    public function notify($type, $title, $message)
+    {
+        $this->dispatch('notify', type: $type, title: $title, message: $message);
     }
 
     public function render()

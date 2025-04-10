@@ -29,7 +29,7 @@
                 required
                 class="mt-1 block w-full"
             />
-            @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            <flux:error name="email" />   
         </div>
 
         <!-- Posición -->
@@ -55,6 +55,7 @@
                 required
                 class="mt-1 block w-full"
             />
+            <flux:error name="salary" />
         </div>
 
         <!-- Botones -->

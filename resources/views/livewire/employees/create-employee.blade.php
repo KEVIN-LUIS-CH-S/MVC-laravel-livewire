@@ -28,6 +28,7 @@
                 required
                 class="mt-1 block w-full"
             />
+            <flux:error name="email" />
         </div>
 
         <!-- Posición -->
@@ -53,6 +54,7 @@
                 required
                 class="mt-1 block w-full"
             />
+            <flux:error name="salary" />
         </div>
 
         <!-- Botones -->

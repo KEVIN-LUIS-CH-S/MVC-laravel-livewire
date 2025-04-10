@@ -71,6 +71,28 @@
 
     <!-- Alerta de confirmación -->
     <script>
+        // Reemplaza todos los event listeners anteriores con este único listener
+        document.addEventListener('livewire:initialized', () => {
+            // Listener para notificaciones
+            Livewire.on('notify', (data) => {
+                Swal.fire({
+                    title: data.title,
+                    text: data.message,
+                    icon: data.type,
+                    timer: data.type === 'success' ? 3000 : undefined,
+                    timerProgressBar: data.type === 'success',
+                });
+            });
+
+            // Listener para abrir el modal
+            Livewire.on('openEditModal', (data) => {
+                setTimeout(() => {
+                    Flux.modal('edit-employee-' + data.employeeId).show();
+                }, 100);
+            });
+        });
+
+        // Función para confirmar eliminación
         function confirmDelete(employeeId) {
             Swal.fire({
                 title: '{{ __('Are you sure?') }}',
@@ -83,40 +105,10 @@
                 cancelButtonText: '{{ __('Cancel') }}'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    @this.call('deleteEmployee', employeeId);
-                    Swal.fire(
-                        '{{ __('Deleted!') }}',
-                        '{{ __('The employee has been deleted.') }}',
-                        'success'
-                    );
+                    @this.dispatch('deleteEmployee', { id: employeeId });
+                    // La notificación será manejada por el backend
                 }
             });
         }
-
-        window.addEventListener('employee-updated', () => {
-            Swal.fire({
-                title: '{{ __('Updated!') }}',
-                text: '{{ __('The employee has been updated.') }}',
-                icon: 'success',
-            });
-        });
-
-        window.addEventListener('employee-created', () => {
-            Swal.fire({
-                title: '{{ __('Success!') }}',
-                text: '{{ __('The employee has been created successfully.') }}',
-                icon: 'success',
-            });
-        });
-
-        document.addEventListener('livewire:initialized', () => {
-            Livewire.on('openEditModal', (data) => {
-                // Pequeño retraso para asegurar que el componente esté montado
-                setTimeout(() => {
-                    // Reemplaza $flux por Flux
-                    Flux.modal('edit-employee-' + data.employeeId).show();
-                }, 100);
-            });
-        });
     </script>
 </x-employees.layout>
