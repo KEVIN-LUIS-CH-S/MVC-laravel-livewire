@@ -6,6 +6,29 @@
             <flux:subheading>{{ __('Fill in the details below to add a new employee.') }}</flux:subheading>
         </div>
 
+         <!-- DNI (Nuevo campo) -->
+        <div>
+            <label for="dni" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('DNI') }}</label>
+            <div class="relative">
+                <flux:input
+                    id="dni"
+                    wire:model.live.debounce.500ms="dni"
+                    type="text"
+                    maxlength="8"
+                    placeholder="Ingresa 8 dígitos"
+                    class="mt-1 block w-full"
+                />
+                @if($isLoading)
+                    <div class="absolute right-3 top-3">
+                        <flux:icon.loading class="h-5 w-5 text-blue-500" />
+                    </div>
+                @endif
+            </div>
+            @if($dniError)
+                <span class="text-red-500 text-sm">{{ $dniError }}</span>
+            @endif
+        </div>
+
         <!-- Nombre -->
         <div>
             <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
