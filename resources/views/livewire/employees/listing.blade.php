@@ -35,10 +35,10 @@
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">{{ $employee->email }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">{{ $employee->position }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">
-                            <flux:modal.trigger :name="'edit-employee-'.$employeeId">
-                                <button wire:click="edit({{ $employee->id }})" class="text-blue-500">
+                            <flux:modal.trigger :name="'edit-employee-'.$employee->id">
+                                <flux:button wire:click="editEmployee({{ $employee->id }})" class="text-blue-500">
                                     {{ __('Edit') }}
-                                </button>
+                                </flux:button>
                             </flux:modal.trigger>
                             <button x-data @click="confirmDelete({{ $employee->id }})" class="text-red-500">
                                 {{ __('Delete') }}
@@ -61,8 +61,13 @@
         {{ $employees->links() }}
     </div>
 
-    <!-- Componente para crear empleados -->
+    <!-- Componentes para crear y editar empleados -->
     <livewire:employees.create-employee />
+    <div>
+        @if($employeeId)
+            <livewire:employees.edit-employee :employeeId="$employeeId" :key="'edit-employee-'.$employeeId"/>
+        @endif
+    </div>
 
     <!-- Alerta de confirmación -->
     <script>

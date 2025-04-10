@@ -5,6 +5,7 @@ namespace App\Livewire\Employees;
 use App\Models\Employee;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Flux;
 
 class Listing extends Component
 {
@@ -12,10 +13,14 @@ class Listing extends Component
 
     public $search = ''; // Campo de búsqueda
     public $employeeId; // ID del empleado seleccionado para editar o eliminar
-    public $name, $email, $position, $salary; // Campos para editar
 
     protected $queryString = ['search']; // Persistencia de la búsqueda en la URL
-    protected $listeners = ['employeeCreated' => 'refreshEmployees','deleteEmployee','employeeCreated' => 'showEmployeeCreatedAlert'];
+    protected $listeners = [
+                            'employeeCreated' => 'handleEmployeeCreated',
+                            'employeeUpdated' => 'handleEmployeeUpdated',
+                            'deleteEmployee' => 'deleteEmployee'
+                            ];
+    
 
     public function updatingSearch()
     {
@@ -27,39 +32,21 @@ class Listing extends Component
         $this->dispatch('employee-created');
     }
 
-    public function edit($id)
+    public function editEmployee($id)
     {
-        $employee = Employee::findOrFail($id);
-        $this->employeeId = $employee->id;
-        $this->name = $employee->name;
-        $this->email = $employee->email;
-        $this->position = $employee->position;
-        $this->salary = $employee->salary;
+        $this->employeeId = $id;
     }
 
-    public function update()
+    public function handleEmployeeUpdated()
     {
-        $this->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email,' . $this->employeeId,
-            'position' => 'required|string|max:255',
-            'salary' => 'required|numeric|min:0',
-        ]);
+        $this->reset('employeeId'); // Limpiar el ID después de actualizar
+        $this->dispatch('employee-updated'); // Disparar el evento para la notificación
+    }
 
-        // Verificar que el empleado existe antes de actualizar
-        if ($this->employeeId) {
-            $employee = Employee::findOrFail($this->employeeId);
-            $employee->update([
-                'name' => $this->name,
-                'email' => $this->email,
-                'position' => $this->position,
-                'salary' => $this->salary,
-            ]);
-
-            // Reiniciar los campos del formulario y cerrar el modal
-            $this->reset('employeeId', 'name', 'email', 'position', 'salary');
-            $this->dispatch('employee-updated');
-        }
+    public function handleEmployeeCreated()
+    {
+        $this->refreshEmployees();
+        $this->showEmployeeCreatedAlert();
     }
 
     public function deleteEmployee($id)
