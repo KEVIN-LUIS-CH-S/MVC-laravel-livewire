@@ -108,5 +108,15 @@
                 icon: 'success',
             });
         });
+
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('openEditModal', (data) => {
+                // Pequeño retraso para asegurar que el componente esté montado
+                setTimeout(() => {
+                    // Reemplaza $flux por Flux
+                    Flux.modal('edit-employee-' + data.employeeId).show();
+                }, 100);
+            });
+        });
     </script>
 </x-employees.layout>

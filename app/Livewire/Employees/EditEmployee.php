@@ -55,7 +55,7 @@ class EditEmployee extends Component
 
             // Reiniciar los campos del formulario y cerrar el modal
             $this->reset('employeeId', 'name', 'email', 'position', 'salary');
-            $this->dispatch('employee-updated');
+            $this->dispatch('employeeUpdated');
         }
     }
 

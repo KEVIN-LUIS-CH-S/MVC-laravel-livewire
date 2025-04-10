@@ -35,6 +35,7 @@ class Listing extends Component
     public function editEmployee($id)
     {
         $this->employeeId = $id;
+        $this->dispatch('openEditModal', employeeId: $id);  
     }
 
     public function handleEmployeeUpdated()
@@ -45,7 +46,6 @@ class Listing extends Component
 
     public function handleEmployeeCreated()
     {
-        $this->refreshEmployees();
         $this->showEmployeeCreatedAlert();
     }
 
@@ -66,11 +66,5 @@ class Listing extends Component
                 ->orderBy('name')
                 ->paginate(10),
         ]);
-    }
-
-    public function refreshEmployees()
-    {
-        // Este método se ejecutará cuando se emita el evento 'employeeCreated'
-        $this->render();
     }
 }
