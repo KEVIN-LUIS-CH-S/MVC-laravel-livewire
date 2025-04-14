@@ -83,6 +83,10 @@
                 });
             });
 
+            Livewire.on('modal-ready', (data) => {
+                Flux.modal('edit-employee-' + data.id).show();
+            });
+
         });
 
         // Función para confirmar eliminación

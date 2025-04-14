@@ -15,11 +15,11 @@ class EditEmployee extends Component
     {
         if ($employeeId) {
             $this->employeeId = $employeeId;
-            $this->loadEmployee();
+            $this->loadEmployee($employeeId);
         }
     }
 
-    public function loadEmployee()
+    public function loadEmployee($employeeId)
     {
         if ($this->employeeId) {
             $employee = Employee::findOrFail($this->employeeId);
@@ -27,7 +27,9 @@ class EditEmployee extends Component
             $this->email = $employee->email;
             $this->position = $employee->position;
             $this->salary = $employee->salary;
+            $this->dispatch('modal-ready', id: $employeeId);
         }
+        
     }
 
 

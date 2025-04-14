@@ -35,11 +35,6 @@ class Listing extends Component
     public function editEmployee($id)
     {
         $this->employeeId = $id;
-            $this->js("
-            setTimeout(() => {
-                Flux.modal('edit-employee-{$id}').show();
-            }, 100);
-        ");
     }
 
     public function handleEmployeeUpdated()

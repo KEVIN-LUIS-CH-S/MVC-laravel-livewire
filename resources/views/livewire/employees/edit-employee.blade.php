@@ -1,4 +1,9 @@
-<flux:modal :name="'edit-employee-'.$employeeId" :show="$errors->isNotEmpty()" focusable class="max-w-lg">
+<flux:modal :name="'edit-employee-'.$employeeId" :show="$errors->isNotEmpty()" focusable class="max-w-lg"
+    x-init="$nextTick(() => {
+        // Usar Alpine para notificar cuando el DOM del modal esté realmente listo
+        Flux.modal('edit-employee-' + '{{ $employeeId }}').show();
+    })">
+    
     <form wire:submit.prevent="update" class="space-y-6">
         <!-- Título -->
         <div>
