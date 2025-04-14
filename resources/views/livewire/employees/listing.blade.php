@@ -35,11 +35,10 @@
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">{{ $employee->email }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">{{ $employee->position }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">
-                            <flux:modal.trigger :name="'edit-employee-'.$employee->id">
-                                <flux:button wire:click="editEmployee({{ $employee->id }})" class="text-blue-500">
-                                    {{ __('Edit') }}
-                                </flux:button>
-                            </flux:modal.trigger>
+                            <flux:button wire:click="editEmployee({{ $employee->id }})" class="text-blue-500">
+                                {{ __('Edit') }}
+                            </flux:button>
+                            <!-- Botón de eliminar (sin cambios) -->
                             <button x-data @click="confirmDelete({{ $employee->id }})" class="text-red-500">
                                 {{ __('Delete') }}
                             </button>
@@ -84,12 +83,6 @@
                 });
             });
 
-            // Listener para abrir el modal
-            Livewire.on('openEditModal', (data) => {
-                setTimeout(() => {
-                    Flux.modal('edit-employee-' + data.employeeId).show();
-                }, 100);
-            });
         });
 
         // Función para confirmar eliminación
