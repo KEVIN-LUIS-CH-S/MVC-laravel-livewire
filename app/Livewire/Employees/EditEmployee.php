@@ -8,10 +8,13 @@ use Flux;
 
 class EditEmployee extends Component
 {
+
+    // Propiedades del formulario
     public $employeeId;
     public $name, $email, $position, $salary;
 
-    public function mount($employeeId = null)
+    // Metodos del ciclo de vida
+    public function mount($employeeId = null) //Inicializa el componente con los datos del empleado
     {
         if ($employeeId) {
             $this->employeeId = $employeeId;
@@ -19,7 +22,8 @@ class EditEmployee extends Component
         }
     }
 
-    public function loadEmployee($employeeId)
+    // Metodos de acceso a Datos
+    public function loadEmployee($employeeId) //Carga los datos del empleado desde la base de datos
     {
         if ($this->employeeId) {
             $employee = Employee::findOrFail($this->employeeId);
@@ -27,32 +31,36 @@ class EditEmployee extends Component
             $this->email = $employee->email;
             $this->position = $employee->position;
             $this->salary = $employee->salary;
+
+            // Notifica que los datos están listos para mostrar el modal
             $this->dispatch('modal-ready', id: $employeeId);
         }
         
     }
 
+    // Metodos de validacion
 
-    public function update()
+    protected function rules()
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:employees,email,' . $this->employeeId,
+            'position' => 'required|string|max:255',
+            'salary' => [
+                'required',
+                'numeric',
+                'min:0',
+                'regex:/^\d*(\.\d{1,2})?$/', // Solo permite números con hasta 2 decimales
+            ],
+        ];
+    }
+
+    // Metodos de accion
+    public function update() //Actualiza los datos del empleado
     {
         try {
-            // Validación (mantén tu código actual)
-            $this->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:employees,email,' . $this->employeeId,
-                'position' => 'required|string|max:255',
-                'salary' => [
-                            'required',
-                            'numeric',
-                            'min:0',
-                            'regex:/^\d*(\.\d{1,2})?$/', // Solo permite números con hasta 2 decimales
-                            ],
-            ]);
-    
-            // Verificar que el empleado existe
-            if (!$this->employeeId) {
-                throw new \Exception(__('Employee not found.'));
-            }
+            // Validacion
+            $this->validate($this->rules());
     
             // Actualizar empleado
             $employee = Employee::findOrFail($this->employeeId);
@@ -70,7 +78,6 @@ class EditEmployee extends Component
             // Notificar éxito
             $this->dispatch('employeeUpdated');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // La validación ya maneja esto automáticamente
             throw $e;
         } catch (\Exception $e) {
             // Para otros errores, notificar al usuario
@@ -80,10 +87,5 @@ class EditEmployee extends Component
                 'message' => $e->getMessage() ?: __('Failed to update employee. Please try again.')
             ]);
         }
-    }
-
-    public function render()
-    {
-        return view('livewire.employees.edit-employee');
     }
 }

@@ -9,25 +9,46 @@ use Flux;
 
 class CreateEmployee extends Component
 {
+    //Propiedades para DNI y estado de carga
     public $dni = '';
-    public $name = '', $email = '', $position = '', $salary = '';
     public $isLoading = false;
     public $dniError = '';
 
-    // Se ejecuta cuando cambia el valor del DNI
-    public function updatedDni()
+    // Propiedades del formulario
+    public $name = '', $email = '', $position = '', $salary = '';
+
+    // Metodos del ciclo de vida
+    public function updatedDni() // Se ejecuta cuando cambia el valor del DNI
     {
         $this->resetValidation('dni');
         $this->dniError = '';
         
+        // Ejecutar búsqueda automática cuando el DNI tiene 8 dígitos
         if (strlen($this->dni) === 8) {
             $this->fetchDataByDni();
         }
     }
 
-    // Método para consultar la API de Perú
-    public function fetchDataByDni()
+    //MÉTODOS DE VALIDACIÓN
+    protected function rules() // Define las reglas de validación para el formulario
     {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:employees,email',
+            'position' => 'required|string|max:255',
+            'salary' => [
+                'required',
+                'numeric',
+                'min:0',
+                'regex:/^\d*(\.\d{1,2})?$/', // Solo permite números con hasta 2 decimales
+            ],
+        ];
+    }
+
+    //MÉTODOS DE INTEGRACIÓN CON API
+    public function fetchDataByDni() // Consulta la API de Perú para obtener datos con el DNI
+    {
+        // Validar formato de DNI
         if (!is_numeric($this->dni) || strlen($this->dni) !== 8) {
             $this->dniError = 'El DNI debe tener 8 dígitos numéricos';
             return;
@@ -71,22 +92,13 @@ class CreateEmployee extends Component
             $this->isLoading = false;
         }
     }
-
-    public function store()
+    
+    //MÉTODOS DE ACCIÓN
+    public function store() //Crear un nuevo empleado
     {
         try {
-            // Validación (mantén tu código actual)
-            $this->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:employees,email',
-                'position' => 'required|string|max:255',
-                'salary' => [
-                            'required',
-                            'numeric',
-                            'min:0',
-                            'regex:/^\d*(\.\d{1,2})?$/', // Solo permite números con hasta 2 decimales
-                            ],
-            ]);
+            // Validacion
+            $this->validate($this->rules());
     
             // Crear empleado
             Employee::create([

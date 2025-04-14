@@ -35,7 +35,11 @@
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">{{ $employee->email }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">{{ $employee->position }}</td>
                         <td class="px-4 py-2 border border-gray-200 dark:border-neutral-600">
-                            <flux:button wire:click="editEmployee({{ $employee->id }})" class="text-blue-500">
+                            <flux:button 
+                                id="edit-btn-{{ $employee->id }}" 
+                                wire:click="editEmployee({{ $employee->id }})" 
+                                class="text-blue-500 edit-employee-button"
+                                data-employee-id="{{ $employee->id }}">
                                 {{ __('Edit') }}
                             </flux:button>
                             <!-- Botón de eliminar (sin cambios) -->
